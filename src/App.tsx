@@ -1,4 +1,11 @@
+import { synth } from "./synth/synth";
+
 function App() {
+  function play() {
+    const s = new synth()
+    s.play()
+  }
+
   return (
     <div className="App">
       <header className="App-header">
@@ -6,6 +13,7 @@ function App() {
           Synth
         </h1>
       </header>
+      <button onClick={() => play()}>play</button>
     </div>
   );
 }
