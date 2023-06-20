@@ -1,9 +1,9 @@
-import { synth } from "./synth/synth";
+import { Control } from "./synth/control";
 
 function App() {
   function play() {
-    const s = new synth()
-    s.play()
+    const ctl = new Control()
+    ctl.play()
   }
 
   return (

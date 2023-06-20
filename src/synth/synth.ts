@@ -1,39 +1,64 @@
-import { custom } from "./module/custom"
-import { noise } from "./module/noise"
-import { oscillator } from "./module/oscillator"
+import { Custom, CustomMap } from "./module/custom"
+import { Noise, NoiseMap } from "./module/noise"
+import { Oscillator, OscillatorsMap } from "./module/oscillator"
 
-export class synth {
+export class Synth {
   volume: number
   out: Array<string>
-  oscillators: Array<oscillator>
-  noise: Array<noise>
-  custom: Array<custom>
-  t: number
-  ctx: AudioContext
+  oscillators: Array<Oscillator>
+  noise: Array<Noise>
+  custom: Array<Custom>
+  oscMap: Map<string, Oscillator>
+  noiseMap: Map<string, Noise>
+  customMap: Map<string, Custom>
 
   constructor() {
     this.volume = 0
-    this.out = new Array<string>()
-    this.oscillators = new Array<oscillator>()
-    this.noise = new Array<noise>()
-    this.custom = new Array<custom>()
-    this.t = 0
-    this.ctx = new window.AudioContext()
+    this.out = []
+    this.oscillators = []
+    this.noise = new Array<Noise>()
+    this.custom = new Array<Custom>()
+
+    this.oscMap = this.makeOscillatorsMap()
+    this.noiseMap = this.makeNoiseMap()
+    this.customMap = this.makeCustomMap()
   }
 
-  play() {
-    const buf = this.ctx.createBuffer(1, this.ctx.sampleRate, this.ctx.sampleRate)
+  nextValue(t: number): number {
+    let y = 0
 
-    const buffering = buf.getChannelData(0)
-    for (let i = 0; i < buffering.length; i++) {
-      buffering[i] = Math.sin(this.t * 2 * Math.PI * 200)
-      this.t += 1 / this.ctx.sampleRate
+    for (let o of this.out) {
+      const osc = this.oscMap.get(o)
+      if (osc) {
+        osc.next(t)
+        y += osc.current.mono
+      }
     }
 
-    const src = this.ctx.createBufferSource()
-    src.buffer = buf
-    src.loop = true
-    src.connect(this.ctx.destination)
-    src.start()
+    return y
+  }
+
+  makeOscillatorsMap(): OscillatorsMap {
+    const oscMap = new Map<string, Oscillator>()
+
+    for (let osc of this.oscillators) oscMap.set(osc.name, osc)
+
+    return oscMap
+  }
+
+  makeNoiseMap(): NoiseMap {
+    const noiseMap = new Map<string, Noise>()
+
+    for (let noise of this.noise) noiseMap.set(noise.name, noise)
+
+    return noiseMap
+  }
+
+  makeCustomMap(): CustomMap {
+    const customMap = new Map<string, Custom>()
+
+    for (let custom of this.custom) customMap.set(custom.name, custom)
+
+    return customMap
   }
 }

@@ -1,5 +1,7 @@
-export type param = {}
+export type Param = {}
 
-export type output = {}
-
-export type signalFunc = (x: number) => number
+export type Output = {
+  mono: number
+  left: number
+  right: number
+}
