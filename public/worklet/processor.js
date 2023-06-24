@@ -4,17 +4,17 @@ class Processor extends AudioWorkletProcessor {
   currentBuffer = 0
 
   constructor(options) {
-    super();
+    super()
     this.buffers[0] = options.processorOptions.buffer
 
-    this.port.onmessage = m => {
+    this.port.onmessage = (m) => {
       this.buffers[(this.currentBuffer + 1) % 2] = m.data
       this.currentBuffer = (this.currentBuffer + 1) % 2
     }
   }
 
   process(_, outputs) {
-    const channel = outputs[0][0];
+    const channel = outputs[0][0]
     for (let i = 0; i < channel.length; i++) {
       channel[i] = this.buffers[this.currentBuffer][this.tick++]
 
@@ -23,8 +23,8 @@ class Processor extends AudioWorkletProcessor {
         this.tick = 0
       }
     }
-    return true;
+    return true
   }
 }
 
-registerProcessor("processor", Processor);
+registerProcessor('processor', Processor)

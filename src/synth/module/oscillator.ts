@@ -34,8 +34,7 @@ export enum OscillatorType {
   Triangle = 'Triangle',
   Square = 'Square',
   Sawtooth = 'Sawtooth',
-  ReverseSawtooth = 'ReverseSawtooth'
+  ReverseSawtooth = 'ReverseSawtooth',
 }
 
 export type OscillatorsMap = Map<string, Oscillator>
-

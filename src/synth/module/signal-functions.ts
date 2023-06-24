@@ -1,4 +1,4 @@
-import { OscillatorType } from "./oscillator";
+import { OscillatorType } from './oscillator'
 
 export type SignalFunc = (x: number) => number
 

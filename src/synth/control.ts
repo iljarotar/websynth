@@ -1,6 +1,6 @@
-import { BehaviorSubject, finalize, Subscription, tap } from "rxjs";
-import { store } from "../store/Store";
-import { Synth } from "./synth";
+import { BehaviorSubject, finalize, Subscription, tap } from 'rxjs'
+import { store } from '../store/Store'
+import { Synth } from './synth'
 
 export class Control {
   private static instance: Control | null = null
@@ -9,7 +9,9 @@ export class Control {
   synth?: Synth
   ctx: AudioContext
   buffer: Array<number>
-  audioNodeSubject = new BehaviorSubject<AudioWorkletNode | undefined>(undefined)
+  audioNodeSubject = new BehaviorSubject<AudioWorkletNode | undefined>(
+    undefined
+  )
   audioNode?: AudioWorkletNode
   playing?: Subscription
 
@@ -17,7 +19,7 @@ export class Control {
     this.ctx = new window.AudioContext()
     this.buffer = this.getNewBuffer()
     this.init()
-    store.synth.subscribe(synth => this.synth = synth)
+    store.synth.subscribe((synth) => (this.synth = synth))
   }
 
   public static getInstance() {
@@ -26,7 +28,9 @@ export class Control {
 
   async init() {
     await this.ctx.audioWorklet.addModule('worklet/processor.js')
-    const audioNode = new AudioWorkletNode(this.ctx, "processor", { processorOptions: { buffer: this.buffer } })
+    const audioNode = new AudioWorkletNode(this.ctx, 'processor', {
+      processorOptions: { buffer: this.buffer },
+    })
     this.buffer = this.getNewBuffer()
 
     audioNode.port.onmessage = () => {
@@ -38,13 +42,15 @@ export class Control {
   }
 
   play() {
-    this.playing = this.audioNodeSubject.pipe(
-      tap(audioNode => {
-        this.audioNode = audioNode
-        this.audioNode?.connect(this.ctx.destination)
-      }),
-      finalize(() => this.audioNode?.disconnect()),
-    ).subscribe()
+    this.playing = this.audioNodeSubject
+      .pipe(
+        tap((audioNode) => {
+          this.audioNode = audioNode
+          this.audioNode?.connect(this.ctx.destination)
+        }),
+        finalize(() => this.audioNode?.disconnect())
+      )
+      .subscribe()
   }
 
   stop() {
