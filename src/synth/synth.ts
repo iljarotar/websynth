@@ -2,6 +2,14 @@ import { Custom, CustomMap } from "./module/custom"
 import { Noise, NoiseMap } from "./module/noise"
 import { Oscillator, OscillatorsMap } from "./module/oscillator"
 
+export type SynthConfig = {
+  volume: number
+  out: Array<string>
+  oscillators: Array<Oscillator>
+  noise: Array<Noise>
+  custom: Array<Custom>
+}
+
 export class Synth {
   volume: number
   out: Array<string>
@@ -12,12 +20,12 @@ export class Synth {
   noiseMap: Map<string, Noise>
   customMap: Map<string, Custom>
 
-  constructor() {
-    this.volume = 0
-    this.out = []
-    this.oscillators = []
-    this.noise = new Array<Noise>()
-    this.custom = new Array<Custom>()
+  constructor(config: SynthConfig) {
+    this.volume = config.volume
+    this.out = config.out
+    this.oscillators = config.oscillators
+    this.noise = config.noise
+    this.custom = config.custom
 
     this.oscMap = this.makeOscillatorsMap()
     this.noiseMap = this.makeNoiseMap()
