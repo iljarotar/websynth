@@ -1,9 +1,19 @@
+import { useState } from "react";
 import { Control } from "./synth/control";
 
 function App() {
+  const [ctl, setCtl] = useState<Control | undefined>(undefined)
+
   function play() {
-    const ctl = new Control()
-    ctl.play()
+    if (!ctl) {
+      const control = new Control()
+      setCtl(control)
+      control.play()
+    } else ctl.play()
+  }
+
+  function stop() {
+    ctl?.stop()
   }
 
   return (
@@ -14,6 +24,7 @@ function App() {
         </h1>
       </header>
       <button onClick={() => play()}>play</button>
+      <button onClick={() => stop()}>stop</button>
     </div>
   );
 }

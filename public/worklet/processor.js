@@ -6,8 +6,9 @@ class Processor extends AudioWorkletProcessor {
   constructor(options) {
     super();
     this.buffers[0] = options.processorOptions.buffer
+
     this.port.onmessage = m => {
-      if (m.data !== 'next') this.buffers[(this.currentBuffer + 1) % 2] = m.data
+      this.buffers[(this.currentBuffer + 1) % 2] = m.data
       this.currentBuffer = (this.currentBuffer + 1) % 2
     }
   }

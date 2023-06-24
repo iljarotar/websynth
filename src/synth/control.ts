@@ -1,35 +1,52 @@
+import { BehaviorSubject, finalize, Subscription, tap } from "rxjs";
 import { Synth } from "./synth";
 
 export class Control {
+  t = 0
   synth: Synth
   ctx: AudioContext
-  t = 0
-  nextBuffer: Array<number>
+  buffer: Array<number>
+  audioNodeSubject = new BehaviorSubject<AudioWorkletNode | undefined>(undefined)
+  audioNode?: AudioWorkletNode
+  playing?: Subscription
 
   constructor() {
     this.synth = new Synth()
     this.ctx = new window.AudioContext()
-    this.nextBuffer = this.newBuffer()
+    this.buffer = this.getNewBuffer()
     this.init()
   }
 
   async init() {
     await this.ctx.audioWorklet.addModule('worklet/processor.js')
-    const audioNode = new AudioWorkletNode(this.ctx, "processor", { processorOptions: { buffer: this.nextBuffer } })
-    this.nextBuffer = this.newBuffer()
-    audioNode.connect(this.ctx.destination)
-    audioNode.port.onmessage = m => {
-      if (m.data === 'next') {
-        audioNode.port.postMessage(this.nextBuffer)
-        this.nextBuffer = this.newBuffer()
-      }
+    const audioNode = new AudioWorkletNode(this.ctx, "processor", { processorOptions: { buffer: this.buffer } })
+    this.buffer = this.getNewBuffer()
+
+    audioNode.port.onmessage = () => {
+      audioNode.port.postMessage(this.buffer)
+      this.buffer = this.getNewBuffer()
     }
+
+    this.audioNodeSubject.next(audioNode)
   }
 
   play() {
+    this.playing = this.audioNodeSubject.pipe(
+      tap(audioNode => {
+        this.audioNode = audioNode
+        this.audioNode?.connect(this.ctx.destination)
+      }),
+      finalize(() => this.audioNode?.disconnect()),
+    ).subscribe()
   }
 
-  newBuffer(): Array<number> {
+  stop() {
+    if (this.playing) {
+      this.playing.unsubscribe()
+    }
+  }
+
+  getNewBuffer(): Array<number> {
     const buffer = new Array<number>()
 
     for (let i = 0; i < 4096; i++) {
