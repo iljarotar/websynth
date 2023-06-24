@@ -1,8 +1,8 @@
 import { Synth } from '../synth/synth'
-import { State } from './State'
+import { State } from './state'
 
 class Store {
-  synth = new State<Synth>().current
+  synth = new State<Synth>()
 }
 
 export const store = new Store()

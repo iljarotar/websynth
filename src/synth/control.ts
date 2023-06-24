@@ -1,5 +1,5 @@
 import { BehaviorSubject, finalize, Subscription, tap } from 'rxjs'
-import { store } from '../store/Store'
+import { store } from '../store/store'
 import { Synth } from './synth'
 
 export class Control {
@@ -19,7 +19,7 @@ export class Control {
     this.ctx = new window.AudioContext()
     this.buffer = this.getNewBuffer()
     this.init()
-    store.synth.subscribe((synth) => (this.synth = synth))
+    store.synth.current.subscribe((synth) => (this.synth = synth))
   }
 
   public static getInstance() {

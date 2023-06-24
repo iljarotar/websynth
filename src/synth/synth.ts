@@ -1,6 +1,6 @@
-import { Custom, CustomMap } from './module/custom'
-import { Noise, NoiseMap } from './module/noise'
-import { Oscillator, OscillatorsMap } from './module/oscillator'
+import { Custom, CustomMap } from './modules/custom'
+import { Noise, NoiseMap } from './modules/noise'
+import { Oscillator, OscillatorsMap } from './modules/oscillator'
 
 export type SynthConfig = {
   volume: number
