@@ -6,7 +6,7 @@ function App() {
 
   function play() {
     if (!ctl) {
-      const control = new Control()
+      const control = Control.getInstance()
       setCtl(control)
       control.play()
     } else ctl.play()

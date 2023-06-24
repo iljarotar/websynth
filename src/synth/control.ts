@@ -2,6 +2,8 @@ import { BehaviorSubject, finalize, Subscription, tap } from "rxjs";
 import { Synth } from "./synth";
 
 export class Control {
+  private static instance: Control | null = null
+
   t = 0
   synth: Synth
   ctx: AudioContext
@@ -10,11 +12,15 @@ export class Control {
   audioNode?: AudioWorkletNode
   playing?: Subscription
 
-  constructor() {
+  private constructor() {
     this.synth = new Synth()
     this.ctx = new window.AudioContext()
     this.buffer = this.getNewBuffer()
     this.init()
+  }
+
+  public static getInstance() {
+    return this.instance ?? (this.instance = new this())
   }
 
   async init() {
