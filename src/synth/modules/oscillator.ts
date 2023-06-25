@@ -1,4 +1,4 @@
-import { Output, Param, OscillatorType } from '../common'
+import { Module, Output, Param, OscillatorType } from '../common'
 import { newSignalFunc, SignalFunc } from '../signal-functions'
 
 export type OscillatorConfig = {
@@ -10,7 +10,7 @@ export type OscillatorConfig = {
   phase: number
 }
 
-export class Oscillator {
+export class Oscillator implements Module {
   name: string
   type: OscillatorType
   freq: Param
@@ -38,5 +38,3 @@ export class Oscillator {
       this.signal(2 * Math.PI * t * this.freq.val) * this.amp.val
   }
 }
-
-export type OscillatorsMap = Map<string, Oscillator>

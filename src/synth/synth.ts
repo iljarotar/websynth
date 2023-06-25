@@ -1,6 +1,7 @@
-import { Custom, CustomMap } from './modules/custom'
-import { Noise, NoiseMap } from './modules/noise'
-import { Oscillator, OscillatorsMap } from './modules/oscillator'
+import { ModuleMap } from './common'
+import { Custom } from './modules/custom'
+import { Noise } from './modules/noise'
+import { Oscillator } from './modules/oscillator'
 
 export type SynthConfig = {
   volume: number
@@ -16,9 +17,9 @@ export class Synth {
   oscillators: Array<Oscillator>
   noise: Array<Noise>
   custom: Array<Custom>
-  oscMap: Map<string, Oscillator>
-  noiseMap: Map<string, Noise>
-  customMap: Map<string, Custom>
+  oscMap: ModuleMap
+  noiseMap: ModuleMap
+  customMap: ModuleMap
 
   constructor(config: SynthConfig) {
     this.volume = config.volume
@@ -33,12 +34,12 @@ export class Synth {
   }
 
   nextValue(t: number): number {
+    this.updateValues(t)
     let y = 0
 
     for (let o of this.out) {
       const osc = this.oscMap.get(o)
       if (osc) {
-        osc.next(t)
         y += osc.current.mono
       }
     }
@@ -46,7 +47,11 @@ export class Synth {
     return y
   }
 
-  makeOscillatorsMap(): OscillatorsMap {
+  private updateValues(t: number) {
+    for (let osc of this.oscillators) osc.next(t)
+  }
+
+  makeOscillatorsMap(): ModuleMap {
     const oscMap = new Map<string, Oscillator>()
 
     for (let osc of this.oscillators) oscMap.set(osc.name, osc)
@@ -54,7 +59,7 @@ export class Synth {
     return oscMap
   }
 
-  makeNoiseMap(): NoiseMap {
+  makeNoiseMap(): ModuleMap {
     const noiseMap = new Map<string, Noise>()
 
     for (let noise of this.noise) noiseMap.set(noise.name, noise)
@@ -62,7 +67,7 @@ export class Synth {
     return noiseMap
   }
 
-  makeCustomMap(): CustomMap {
+  makeCustomMap(): ModuleMap {
     const customMap = new Map<string, Custom>()
 
     for (let custom of this.custom) customMap.set(custom.name, custom)

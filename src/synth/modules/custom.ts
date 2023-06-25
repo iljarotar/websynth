@@ -1,9 +1,29 @@
-export class Custom {
-  name: string
+import { Module, Output, Param } from '../common'
 
-  constructor() {
-    this.name = ''
-  }
+export type CustomConfig = {
+  name: string
+  data: Array<number>
+  freq: Param
+  amp: Param
+  pan: Param
 }
 
-export type CustomMap = Map<string, Custom>
+export class Custom implements Module {
+  name: string
+  data: Array<number>
+  freq: Param
+  amp: Param
+  pan: Param
+  integral: number
+  current: Output
+
+  constructor(config: CustomConfig) {
+    this.name = ''
+    this.data = config.data
+    this.freq = config.freq
+    this.amp = config.amp
+    this.pan = config.pan
+    this.integral = 0
+    this.current = { mono: 0, left: 0, right: 0 }
+  }
+}
