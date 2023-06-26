@@ -20,6 +20,7 @@ export type Limits = {
 export interface Module {
   name: string
   current: Output
+  integral: number
 }
 
 export type ModuleMap = Map<string, Module>
@@ -32,28 +33,23 @@ export enum OscillatorType {
   ReverseSawtooth = 'ReverseSawtooth',
 }
 
-export const limits = new Map<string, Limits>([
-  ['amp', { low: 0, high: 1 }],
-  ['mod', { low: 0, high: 1 }],
-  ['pan', { low: -1, high: 1 }],
-  ['phase', { low: -1, high: 1 }],
-  ['freq', { low: 0, high: 20000 }],
-])
+export const limits = {
+  amp: { low: 0, high: 1 },
+  mod: { low: 0, high: 1 },
+  pan: { low: -1, high: 1 },
+  phase: { low: -1, high: 1 },
+  freq: { low: 0, high: 20000 },
+}
 
 export function modulate(
   modulators: Array<string>,
-  ...moduleMaps: ModuleMap[]
+  moduleMap: ModuleMap
 ): number {
   let y = 0
 
-  loop: for (let index of modulators) {
-    for (let map of moduleMaps) {
-      const mod = map.get(index)
-      if (mod) {
-        y += mod.current.mono
-        continue loop
-      }
-    }
+  for (let index of modulators) {
+    const mod = moduleMap.get(index)
+    if (mod) y += mod.current.mono
   }
 
   return y

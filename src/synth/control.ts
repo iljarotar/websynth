@@ -1,5 +1,6 @@
 import { BehaviorSubject, finalize, Subscription, tap } from 'rxjs'
 import { store } from '../store/store'
+import { sampleRate } from './config'
 import { Synth } from './synth'
 
 export class Control {
@@ -16,7 +17,7 @@ export class Control {
   playing?: Subscription
 
   private constructor() {
-    this.ctx = new window.AudioContext()
+    this.ctx = new window.AudioContext({ sampleRate })
     this.buffer = this.getNewBuffer()
     this.init()
     store.synth.current.subscribe((synth) => (this.synth = synth))
@@ -24,6 +25,11 @@ export class Control {
 
   public static getInstance() {
     return this.instance ?? (this.instance = new this())
+  }
+
+  // TODO: is it necessary to close the AudioContext? If yes, when?
+  public close() {
+    this.ctx.close()
   }
 
   async init() {
@@ -64,7 +70,7 @@ export class Control {
 
     for (let i = 0; i < 4096; i++) {
       buffer.push(this.synth?.nextValue(this.t) ?? 0)
-      this.t += 1 / this.ctx.sampleRate
+      this.t += 1 / sampleRate
     }
 
     return buffer
