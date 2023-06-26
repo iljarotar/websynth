@@ -18,6 +18,7 @@ export type Limits = {
 }
 
 export interface Module {
+  name: string
   current: Output
 }
 
