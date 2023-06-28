@@ -7,13 +7,13 @@ export function newSignalFunc(oscType: OscillatorType): SignalFunc {
     case OscillatorType.Sine:
       return SineSignalFunc()
     case OscillatorType.Square:
-      return NoSignalFunc()
+      return SquareSignalFunc()
     case OscillatorType.Sawtooth:
-      return NoSignalFunc()
+      return SawtoothSignalFunc()
     case OscillatorType.ReverseSawtooth:
-      return NoSignalFunc()
+      return ReverseSawtoothSignalFunc()
     case OscillatorType.Triangle:
-      return NoSignalFunc()
+      return TriangleSignalFunc()
     default:
       return NoSignalFunc()
   }
@@ -25,4 +25,31 @@ function NoSignalFunc(): SignalFunc {
 
 function SineSignalFunc(): SignalFunc {
   return (t: number) => Math.sin(t)
+}
+
+function SquareSignalFunc(): SignalFunc {
+  return (t: number) => {
+    if (Math.sin(t) > 0) return 1
+    return -1
+  }
+}
+
+function TriangleSignalFunc(): SignalFunc {
+  return (t: number) => {
+    return (2 / Math.PI) * Math.asin(Math.sin(t))
+  }
+}
+
+function SawtoothSignalFunc(): SignalFunc {
+  return (t: number) => {
+    return 2 * (t / (2 * Math.PI) - Math.floor(1 / 2 + t / (2 * Math.PI)))
+  }
+}
+
+function ReverseSawtoothSignalFunc(): SignalFunc {
+  return (t: number) => {
+    return (
+      1 - 2 * (t / (2 * Math.PI) - Math.floor(1 / 2 + t / (2 * Math.PI))) - 1
+    )
+  }
 }

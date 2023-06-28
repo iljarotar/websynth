@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { store } from './store/store'
 import { OscillatorType } from './synth/common'
 import { Control } from './synth/control'
+import { Noise } from './synth/modules/noise'
 import { Oscillator } from './synth/modules/oscillator'
 import { Synth } from './synth/synth'
 
@@ -13,13 +14,27 @@ store.synth.update(
       new Oscillator({
         name: 'o1',
         type: OscillatorType.Sine,
-        freq: { val: 200.1, mod: [], modamp: 0 },
+        freq: { val: 200, mod: ['o2'], modamp: 10 },
+        amp: { val: 0.5, mod: [], modamp: 0.5 },
+        pan: { val: 0, mod: [], modamp: 0 },
+        phase: 0,
+      }),
+      new Oscillator({
+        name: 'o2',
+        type: OscillatorType.Square,
+        freq: { val: 0.5, mod: [], modamp: 0 },
         amp: { val: 1, mod: [], modamp: 0 },
         pan: { val: 0, mod: [], modamp: 0 },
         phase: 0,
       }),
     ],
-    noise: [],
+    noise: [
+      new Noise({
+        name: 'n1',
+        amp: { val: 1, mod: [], modamp: 0 },
+        pan: { val: 0, mod: [], modamp: 0 },
+      }),
+    ],
     custom: [],
   })
 )

@@ -50,6 +50,7 @@ export class Synth {
 
   private updateValues(t: number) {
     for (let osc of this.oscillators) osc.next(t, this.moduleMap)
+    for (let noise of this.noise) noise.next(this.moduleMap)
   }
 
   makeModuleMap(map: ModuleMap, modules: Array<Module>): ModuleMap {

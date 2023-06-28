@@ -44,6 +44,7 @@ export class Oscillator implements Module {
     this.current = { mono: 0, left: 0, right: 0 }
     this.signal = newSignalFunc(this.type)
     this.limitParams()
+
     const y = this.signalValue(0, this.amp.val, 0)
     this.current = stereo(y, this.pan.val)
   }
@@ -98,7 +99,11 @@ export class Oscillator implements Module {
     this.pan.modamp = limit(this.pan.modamp, limits.mod.low, limits.mod.high)
     this.pan.val = limit(this.pan.val, limits.pan.low, limits.pan.high)
 
-    this.freq.modamp = limit(this.freq.modamp, limits.mod.low, limits.mod.high)
+    this.freq.modamp = limit(
+      this.freq.modamp,
+      limits.freq.low,
+      limits.freq.high
+    )
     this.freq.val = limit(this.freq.val, limits.freq.low, limits.freq.high)
   }
 }
