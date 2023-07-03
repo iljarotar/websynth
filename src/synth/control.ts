@@ -9,7 +9,7 @@ export class Control {
   t = 0
   synth?: Synth
   ctx: AudioContext
-  buffer: Array<number>
+  buffer: [left: number[], right: number[]]
   audioNodeSubject = new BehaviorSubject<AudioWorkletNode | undefined>(
     undefined
   )
@@ -36,6 +36,8 @@ export class Control {
     await this.ctx.audioWorklet.addModule('worklet/processor.js')
     const audioNode = new AudioWorkletNode(this.ctx, 'processor', {
       processorOptions: { buffer: this.buffer },
+      numberOfOutputs: 1,
+      outputChannelCount: [2],
     })
     this.buffer = this.getNewBuffer()
 
@@ -65,14 +67,20 @@ export class Control {
     }
   }
 
-  getNewBuffer(): Array<number> {
-    const buffer = new Array<number>()
+  getNewBuffer(): [leftBuffer: number[], rightBuffer: number[]] {
+    const [leftBuffer, rightBuffer] = [new Array<number>(), new Array<number>()]
 
     for (let i = 0; i < 4096; i++) {
-      buffer.push(this.synth?.nextValue(this.t) ?? 0)
+      const output = this.synth?.nextValue(this.t) ?? {
+        mono: 0,
+        left: 0,
+        right: 0,
+      }
+      leftBuffer.push(output.left)
+      rightBuffer.push(output.right)
       this.t += 1 / sampleRate
     }
 
-    return buffer
+    return [leftBuffer, rightBuffer]
   }
 }

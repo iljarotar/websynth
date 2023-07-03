@@ -59,8 +59,8 @@ export function stereo(x: number, pan: number): Output {
   const out = { mono: 0, left: 0, right: 0 }
   const p = percentage(pan, -1, 1)
   out.mono = x
-  out.left = x * p
-  out.right = x * (1 - p)
+  out.right = x * p
+  out.left = x * (1 - p)
 
   return out
 }

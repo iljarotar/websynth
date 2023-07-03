@@ -1,4 +1,4 @@
-import { Module, ModuleMap } from './common'
+import { Module, ModuleMap, Output } from './common'
 import { Custom } from './modules/custom'
 import { Noise } from './modules/noise'
 import { Oscillator } from './modules/oscillator'
@@ -34,18 +34,20 @@ export class Synth {
     this.moduleMap = this.makeModuleMap(this.moduleMap, this.custom)
   }
 
-  nextValue(t: number): number {
+  nextValue(t: number): Output {
     this.updateValues(t)
-    let y = 0
+    let output = { mono: 0, left: 0, right: 0 }
 
     for (let o of this.out) {
       const mod = this.moduleMap.get(o)
       if (mod) {
-        y += mod.current.mono
+        output.mono += mod.current.mono
+        output.left += mod.current.left
+        output.right += mod.current.right
       }
     }
 
-    return y
+    return output
   }
 
   private updateValues(t: number) {

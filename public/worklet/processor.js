@@ -1,5 +1,8 @@
 class Processor extends AudioWorkletProcessor {
-  buffers = [[], []]
+  buffers = [
+    [[], []],
+    [[], []],
+  ] // two buffers for two channels each
   tick = 0
   currentBuffer = 0
 
@@ -14,15 +17,18 @@ class Processor extends AudioWorkletProcessor {
   }
 
   process(_, outputs) {
-    const channel = outputs[0][0]
-    for (let i = 0; i < channel.length; i++) {
-      channel[i] = this.buffers[this.currentBuffer][this.tick++]
+    const [left, right] = [outputs[0][0], outputs[0][1]]
+    for (let i = 0; i < left.length; i++) {
+      const buffer = this.buffers[this.currentBuffer]
+      left[i] = buffer[0][this.tick]
+      right[i] = buffer[1][this.tick++]
 
-      if (this.tick === this.buffers[this.currentBuffer].length) {
+      if (this.tick >= buffer[0].length) {
         this.port.postMessage('next')
         this.tick = 0
       }
     }
+
     return true
   }
 }
